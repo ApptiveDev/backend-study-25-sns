@@ -53,16 +53,16 @@ com.apptivedev.sns
 
   → `PostController`가 201 상태 코드와 함께 응답합니다.
 ### Entity와 DTO를 분리한 이유는 무엇인가요?
-    - Entity는 DB테이블과 연결된 원본이고 DTO는 클라이언트와 주고받는 양식임.
-    -이 때 Entity를 그대로 응답하면 숨겨야 하는 값이 노출되기 때문에 응답 DTO를 통해 보여줘야 하는 값만 보여줌
+- Entity는 DB테이블과 연결된 원본이고 DTO는 클라이언트와 주고받는 양식임.
+- 이 때 Entity를 그대로 응답하면 숨겨야 하는 값이 노출되기 때문에 응답 DTO를 통해 보여줘야 하는 값만 보여줌
 ### Controller, Service, Repository를 나눈 이유는 무엇인가요?
-    -각 패키지 별로 하는 일을 명확히 나눠 유지 보수성을 올리기 위함.
+- 각 패키지 별로 하는 일을 명확히 나눠 유지 보수성을 올리기 위함.
 ### 그 밖에 새로 알게 된 것
-    -Annotation의 사용법에 감을 잡았고 각 Annotation을 특정 위치에 왜 사용해야 하는지 등을 알 수 있었음. 
-    -직접 코드를 구현하면서 이론으로 접한 DTO의 필요성과 Entity의 활용등을 잘 이해 할 수 있었음.
+- Annotation의 사용법에 감을 잡았고 각 Annotation을 특정 위치에 왜 사용해야 하는지 등을 알 수 있었음. 
+- 직접 코드를 구현하면서 이론으로 접한 DTO의 필요성과 Entity의 활용등을 잘 이해 할 수 있었음.
 
 ## AI 활용
-    -코드 구성을 7단계(DB설정,Entity,Repo설정,C,R,U,D,실패처리) 나누어 시작 후 막히는 단계는 AI의 설명과 함께 작성함(DB-Entity 연결과 DTO - Entity 변환에서 주로 사용하였습니다.)
-    -상황에 따라 필요한 Annotation에 대해 조언을 받음.
-    -Controller / Service / entity 등을 연결 할 때 햇갈리거나 몰랐던 부분에서 도움을 받음.
-    -README의 업계 표준 양식을 받아서 그 것을 기반으로 README 작성
+- 코드 구성을 7단계(DB설정,Entity,Repo설정,C,R,U,D,실패처리) 나누어 시작 후 막히는 단계는 AI의 설명과 함께 작성함(DB-Entity 연결과 DTO - Entity 변환에서 주로 사용하였습니다.)
+- 상황에 따라 필요한 Annotation에 대해 조언을 받음.
+- Controller / Service / entity 등을 연결 할 때 햇갈리거나 몰랐던 부분에서 도움을 받음.
+- README의 업계 표준 양식을 받아서 그 것을 기반으로 README 작성
