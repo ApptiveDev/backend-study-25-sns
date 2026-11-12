@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import com.apptivedev.sns.domain.post.dto.PostUpdateRequest;
 
 @Service
 @Transactional(readOnly = true)   // 기본은 읽기 전용, 쓰기 메서드에만 @Transactional을 따로 붙인다
@@ -22,14 +23,14 @@ public class PostService {
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
-    //-------------쓰기---------------------
+    //-------------Create---------------------
     @Transactional
     public PostResponse create(PostCreateRequest request) {
         Post post = new Post(request.title(), request.content());
         Post savedPost = postRepository.save(post);
         return PostResponse.from(savedPost);
     }
-    //------------조회---------------
+    //---------------Read------------
     //Transcational은 자동으로 True값으로 들어감.
     public List<PostResponse> findAll() {
         return postRepository.findAll().stream()   // List<Post>를 하나씩 흘려보내며
@@ -49,5 +50,19 @@ public class PostService {
     private Post getPostOrThrow(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+    }
+    //--------------Update----------------
+    // 수정: 보낸 필드만 변경, save() 없이 Dirty Checking으로 반영
+    @Transactional
+    public PostResponse update(Long postId, PostUpdateRequest request) {
+        Post post = getPostOrThrow(postId);     // DB에서 꺼냄 → JPA가 이 객체를 지켜봄 (없으면 404)
+
+        if (request.title() != null) {          // 보낸 필드만 변경
+            post.changeTitle(request.title());
+        }
+        if (request.content() != null) {
+            post.changeContent(request.content());
+        }
+        return PostResponse.from(post);         // save() 없음 -> 메서드가 끝나며 커밋될 때 UPDATE 실행
     }
 }

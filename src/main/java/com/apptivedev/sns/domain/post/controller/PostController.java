@@ -6,6 +6,7 @@ import com.apptivedev.sns.domain.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import com.apptivedev.sns.domain.post.dto.PostUpdateRequest;
 
 @RestController
 @RequestMapping("/posts")
@@ -34,6 +35,13 @@ public class PostController {
     @GetMapping("/{postId}")
     public PostResponse findById(@PathVariable("postId") Long postId) {
         return postService.findById(postId);
+    }
+
+    // PATCH /posts/{postId} → 200 OK
+    @PatchMapping("/{postId}")
+    public PostResponse update(@PathVariable("postId") Long postId,
+                               @RequestBody PostUpdateRequest request) {
+        return postService.update(postId, request);
     }
 
 }
