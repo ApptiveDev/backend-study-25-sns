@@ -1,3 +1,20 @@
 spring:
   application:
     name: backend-study-25-sns
+
+  datasource:
+    driver-class-name: org.h2.Driver      # H2 DB에 연결하는 드라이버
+    url: jdbc:h2:file:./data/sns-db       # 파일 DB: 프로젝트 폴더의 data/sns-db.mv.db 에 저장
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true                       # localhost:8080/h2-console 에서 DB 확인 가능
+      path: /h2-console                   # 콘솔 주소 (기본값과 같음)
+
+  jpa:
+    hibernate:
+      ddl-auto: update                    # 엔티티와 비교해 바뀐 부분만 반영 (데이터 유지)
+    database-platform: org.hibernate.dialect.H2Dialect   # JPA가 H2 문법으로 SQL을 만들도록 지정
+    show-sql: true                        # JPA가 만든 SQL을 콘솔에 출력
