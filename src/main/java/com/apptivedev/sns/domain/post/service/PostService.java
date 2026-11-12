@@ -44,17 +44,30 @@ public class PostService {
         return PostResponse.from(post);
     }
 
-    // ---------- 내부 도우미 ----------
 
     // id로 게시글을 찾고, 없으면 404 예외를 던진다 (단건 조회, 수정, 삭제에서 같이 사용)
     private Post getPostOrThrow(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
     }
+
+
     //--------------Update----------------
-    // 수정: 보낸 필드만 변경, save() 없이 Dirty Checking으로 반영
+    // 수정: 보낸 필드만 변경, save() 없이 Dirty Checking으로 반영, 규칙 설정
     @Transactional
     public PostResponse update(Long postId, PostUpdateRequest request) {
+        // 규칙 1: 수정할 필드를 하나도 보내지 않으면 400
+        if (request.title() == null && request.content() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 필드(title, content)를 하나 이상 보내야 합니다.");
+        }
+        // 규칙 2: 보낸 값이 빈 문자열이거나 공백만 있으면 400
+        if (request.title() != null && request.title().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제목은 빈 문자열이나 공백일 수 없습니다.");
+        }
+        if (request.content() != null && request.content().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "내용은 빈 문자열이나 공백일 수 없습니다.");
+        }
+
         Post post = getPostOrThrow(postId);     // DB에서 꺼냄 → JPA가 이 객체를 지켜봄 (없으면 404)
 
         if (request.title() != null) {          // 보낸 필드만 변경
@@ -65,4 +78,13 @@ public class PostService {
         }
         return PostResponse.from(post);         // save() 없음 -> 메서드가 끝나며 커밋될 때 UPDATE 실행
     }
+
+    // ------------Delete-------------------------
+    @Transactional
+    public void delete(Long postId) {
+        Post post = getPostOrThrow(postId);   // 없는 글이면 여기서 404
+        postRepository.delete(post);
+    }
+
+
 }

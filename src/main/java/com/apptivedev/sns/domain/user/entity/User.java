@@ -21,7 +21,7 @@ public class User {
     @Column(nullable = false, length = 10)
     private String nickname;
 
-    @Column(nullable = false, length = 400)      //암호화를 대비해서 넉넉하게 -> AI한테 지적당함.
+    @Column(nullable = false, length = 400)      //암호화를 대비해서 넉넉하게
     private String password;
 
     public User(String email, String nickname, String password) {

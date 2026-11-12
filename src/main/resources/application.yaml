@@ -18,3 +18,8 @@ spring:
       ddl-auto: update                    # 엔티티와 비교해 바뀐 부분만 반영 (데이터 유지)
     database-platform: org.hibernate.dialect.H2Dialect   # JPA가 H2 문법으로 SQL을 만들도록 지정
     show-sql: true                        # JPA가 만든 SQL을 콘솔에 출력
+
+server:
+  error:
+    include-message: always          # 예외에 담은 메시지("게시글을 찾을 수 없습니다.")를 응답에 포함
+    include-binding-errors: always

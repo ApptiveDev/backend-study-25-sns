@@ -2,11 +2,13 @@ package com.apptivedev.sns.domain.post.controller;
 
 import com.apptivedev.sns.domain.post.dto.PostCreateRequest;
 import com.apptivedev.sns.domain.post.dto.PostResponse;
+import com.apptivedev.sns.domain.post.dto.PostUpdateRequest;
 import com.apptivedev.sns.domain.post.service.PostService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import com.apptivedev.sns.domain.post.dto.PostUpdateRequest;
 
 @RestController
 @RequestMapping("/posts")
@@ -21,7 +23,7 @@ public class PostController {
     // POST /posts → 201 Created
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostResponse create(@RequestBody PostCreateRequest request) {
+    public PostResponse create(@Valid @RequestBody PostCreateRequest request) {
         return postService.create(request);
     }
 
@@ -40,8 +42,15 @@ public class PostController {
     // PATCH /posts/{postId} → 200 OK
     @PatchMapping("/{postId}")
     public PostResponse update(@PathVariable("postId") Long postId,
-                               @RequestBody PostUpdateRequest request) {
+                               @Valid @RequestBody PostUpdateRequest request) {
         return postService.update(postId, request);
+    }
+
+    // DELETE /posts/{postId} → 204 No Content
+    @DeleteMapping("/{postId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("postId") Long postId) {
+        postService.delete(postId);
     }
 
 }
