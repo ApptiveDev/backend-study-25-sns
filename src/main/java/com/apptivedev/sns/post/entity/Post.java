@@ -12,6 +12,39 @@ public class Post {
     private Long id;
 
     private String title;
-
     private String content;
+
+    // JPA가 엔티티를 생성할 때 사용하는 기본 생성자
+    // 흠...
+    protected Post() {
+    }
+
+    public Post(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void update(String title, String content) {
+        if (title != null) {
+            this.title = title;
+        }
+        // 아무것도 받지 않으면 그걸로 덮어씌우는 게 아니라
+        // 기존 내용을 변경하지 않고 유지함.
+
+        if (content != null) {
+            this.content = content;
+        }
+    }
 }
