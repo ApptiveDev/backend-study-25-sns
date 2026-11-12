@@ -35,3 +35,14 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Local database and secrets ###
+data/
+*.mv.db
+*.trace.db
+.env
+.env.*
+!.env.example
+application-local.yaml
+application-local.yml
+application-local.properties
