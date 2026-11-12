@@ -62,7 +62,7 @@ com.apptivedev.sns
     -직접 코드를 구현하면서 이론으로 접한 DTO의 필요성과 Entity의 활용등을 잘 이해 할 수 있었음.
 
 ## AI 활용
-    -코드 구성을 7단계(DB설정,Entity,Repo설정,C,R,U,D,실패처리) 나누어 시작 후 막히는 단계는 AI의 설명과 함께 작성함
+    -코드 구성을 7단계(DB설정,Entity,Repo설정,C,R,U,D,실패처리) 나누어 시작 후 막히는 단계는 AI의 설명과 함께 작성함(DB-Entity 연결과 DTO - Entity 변환에서 주로 사용하였습니다.)
     -상황에 따라 필요한 Annotation에 대해 조언을 받음.
     -Controller / Service / entity 등을 연결 할 때 햇갈리거나 몰랐던 부분에서 도움을 받음.
     -README의 업계 표준 양식을 받아서 그 것을 기반으로 README 작성
