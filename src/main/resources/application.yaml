@@ -1,3 +1,10 @@
 spring:
   application:
     name: backend-study-25-sns
+  datasource:
+    url: jdbc:h2:file:./data/sns-db
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
