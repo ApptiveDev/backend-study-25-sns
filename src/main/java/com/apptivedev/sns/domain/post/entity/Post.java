@@ -26,18 +26,34 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
     private User author;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    @Column(nullable = false, length = 500)
     private String content;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Post(User author, String content) {
+    public Post(User author, String title,String content) {
         this.author = author;
+        this.title = title;
+        this.content = content;
+    }
+
+    public Post(String title, String content) {
+        this(null, title, content);
+    }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeContent(String content) {
         this.content = content;
     }
 

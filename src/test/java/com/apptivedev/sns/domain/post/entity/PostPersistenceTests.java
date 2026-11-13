@@ -19,8 +19,8 @@ class PostPersistenceTests {
         User user = new User("dowon@example.com", "도원");
         entityManager.persist(user);
 
-        Post firstPost = new Post(user, "첫 번째 게시글");
-        Post secondPost = new Post(user, "두 번째 게시글");
+        Post firstPost = new Post(user, "첫 번째 제목", "첫 번째 게시글");
+        Post secondPost = new Post(user, "두 번째 제목", "두 번째 게시글");
         entityManager.persist(firstPost);
         entityManager.persist(secondPost);
         entityManager.flush();
