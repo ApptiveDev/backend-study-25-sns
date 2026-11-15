@@ -1,3 +1,12 @@
 spring:
   application:
     name: backend-study-25-sns
+  datasource:
+    url: ${DB_URL:jdbc:h2:file:./data/sns-db}
+    driver-class-name: org.h2.Driver
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
