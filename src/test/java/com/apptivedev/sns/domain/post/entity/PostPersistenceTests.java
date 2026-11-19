@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @DataJpaTest
 class PostPersistenceTests {
@@ -16,7 +17,13 @@ class PostPersistenceTests {
 
     @Test
     void oneUserCanWriteMultiplePosts() {
-        User user = new User("dowon@example.com", "도원");
+        String passwordHash = new BCryptPasswordEncoder().encode("study1234!");
+
+        User user = User.create(
+                "dowon@example.com",
+                passwordHash,
+                "도원"
+        );
         entityManager.persist(user);
 
         Post firstPost = new Post(user, "첫 번째 제목", "첫 번째 게시글");
@@ -31,7 +38,7 @@ class PostPersistenceTests {
         Post savedSecondPost = entityManager.find(Post.class, secondPost.getId());
 
         assertThat(savedUser.getEmail()).isEqualTo("dowon@example.com");
-        assertThat(savedUser.getNickname()).isEqualTo("도원");
+        assertThat(savedUser.getName()).isEqualTo("도원");
         assertThat(savedUser.getCreatedAt()).isNotNull();
         assertThat(savedFirstPost.getContent()).isEqualTo("첫 번째 게시글");
         assertThat(savedSecondPost.getContent()).isEqualTo("두 번째 게시글");

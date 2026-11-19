@@ -26,8 +26,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "user_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
     @Column(nullable = false, length = 100)
@@ -39,22 +39,47 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Post(User author, String title,String content) {
+    public Post(User author, String title, String content) {
+        if (author == null) {
+            throw new IllegalArgumentException("게시글 작성자가 필요합니다.");
+        }
+
+        validateTitle(title);
+        validateContent(content);
+
         this.author = author;
         this.title = title;
         this.content = content;
     }
 
-    public Post(String title, String content) {
-        this(null, title, content);
-    }
-
     public void changeTitle(String title) {
+        validateTitle(title);
         this.title = title;
     }
 
     public void changeContent(String content) {
+        validateContent(content);
         this.content = content;
+    }
+
+    public void changeText(String title, String content) {
+        // 두 값이 모두 유효한지 확인한 다음 상태를 바꾼다.
+        validateTitle(title);
+        validateContent(content);
+        this.title = title;
+        this.content = content;
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isBlank() || title.length() > 100) {
+            throw new IllegalArgumentException("제목은 비어 있을 수 없고 100자 이하여야 합니다.");
+        }
+    }
+
+    private void validateContent(String content) {
+        if (content == null || content.isBlank() || content.length() > 500) {
+            throw new IllegalArgumentException("내용은 비어 있을 수 없고 500자 이하여야 합니다.");
+        }
     }
 
     @PrePersist

@@ -25,15 +25,62 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 30)
-    private String nickname;
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    @Column(name = "nickname", nullable = false, length = 20)
+    private String name;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public User(String email, String nickname) {
+    private User(String email, String password, String name) {
+        validateEmail(email);
+        validatePasswordHash(password);
+        validateName(name);
+
         this.email = email;
-        this.nickname = nickname;
+        this.password = password;
+        this.name = name;
+    }
+
+    public static User create(
+            String email,
+            String passwordHash,
+            String name
+    ) {
+        return new User(email, passwordHash, name);
+    }
+
+    private void validateEmail(String email) {
+        if (email == null || email.isBlank() || email.length() > 100) {
+            throw new IllegalArgumentException(
+                    "이메일은 비어 있을 수 없고 100자 이하여야 합니다."
+            );
+        }
+    }
+
+    private void validatePasswordHash(String passwordHash) {
+        if (passwordHash == null
+                || passwordHash.isBlank()
+                || passwordHash.length() > 255) {
+            throw new IllegalArgumentException(
+                    "저장할 비밀번호 Hash가 올바르지 않습니다."
+            );
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank() || name.length() > 20) {
+            throw new IllegalArgumentException(
+                    "이름은 비어 있을 수 없고 20자 이하여야 합니다."
+            );
+        }
+    }
+
+    public void changeName(String name) {
+        validateName(name);
+        this.name = name;
     }
 
     @PrePersist

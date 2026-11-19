@@ -1,114 +1,100 @@
 package com.apptivedev.sns.domain.post.service;
 
+import com.apptivedev.sns.domain.auth.exception.UnauthorizedException;
 import com.apptivedev.sns.domain.post.dto.CreatePostRequest;
 import com.apptivedev.sns.domain.post.dto.PostResponse;
+import com.apptivedev.sns.domain.post.dto.PostPageResponse;
+import com.apptivedev.sns.domain.post.dto.UpdatePostRequest;
 import com.apptivedev.sns.domain.post.entity.Post;
+import com.apptivedev.sns.domain.post.exception.PostNotFoundException;
 import com.apptivedev.sns.domain.post.repository.PostRepository;
+import com.apptivedev.sns.domain.user.entity.User;
+import com.apptivedev.sns.domain.user.repository.UserRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import com.apptivedev.sns.domain.post.exception.PostNotFoundException;
-import com.apptivedev.sns.domain.post.dto.UpdatePostRequest;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
 
     private final PostRepository postRepository;
-
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+    private final UserRepository userRepository;
 
     @Transactional
-    public PostResponse createPost(CreatePostRequest request) {
-        validateText(request.title(), "제목", 100);
-        validateText(request.content(), "내용", 500);
+    public PostResponse createPost(
+            Long loginUserId,
+            CreatePostRequest request
+    ) {
+        User author = userRepository.findById(loginUserId)
+                .orElseThrow(() -> new UnauthorizedException(
+                        "사용할 수 없는 인증 정보입니다."
+                ));
 
-        Post post = new Post(request.title(), request.content());
+        Post post = new Post(
+                author,
+                request.title(),
+                request.content()
+        );
+
         Post savedPost = postRepository.save(post);
 
-        return new PostResponse(
-                savedPost.getId(),
-                savedPost.getTitle(),
-                savedPost.getContent()
-        );
+        return PostResponse.from(savedPost);
     }
 
-    @Transactional(readOnly = true)
     public List<PostResponse> getPosts() {
         return postRepository.findAll()
                 .stream()
-                .map(post -> new PostResponse(
-                        post.getId(),
-                        post.getTitle(),
-                        post.getContent()
-                ))
+                .map(PostResponse::from)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public PostResponse getPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+    public PostPageResponse getPostsPage(int page, int size) {
+        if (page < 0 || size < 1 || size > 100) {
+            throw new IllegalArgumentException("page는 0 이상, size는 1~100이어야 합니다.");
+        }
 
-        return new PostResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent()
-        );
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return PostPageResponse.from(postRepository.findAll(pageable).map(PostResponse::from));
+    }
+
+    public PostResponse getPost(Long postId) {
+        Post post = findPost(postId);
+        return PostResponse.from(post);
     }
 
     @Transactional
-    public PostResponse updatePost(Long postId, UpdatePostRequest request) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+    public PostResponse updatePost(
+            Long postId,
+            UpdatePostRequest request
+    ) {
+        Post post = findPost(postId);
 
         if (!request.hasTitle() && !request.hasContent()) {
             throw new IllegalArgumentException("수정할 항목을 보내주세요.");
         }
 
-        if (request.hasTitle()) {
-            validateText(request.getTitle(), "제목", 100);
-        }
-
-        if (request.hasContent()) {
-            validateText(request.getContent(), "내용", 500);
-        }
-
-        if (request.hasTitle()) {
-            post.changeTitle(request.getTitle());
-        }
-
-        if (request.hasContent()) {
-            post.changeContent(request.getContent());
-        }
-
-        return new PostResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent()
+        post.changeText(
+                request.hasTitle() ? request.getTitle() : post.getTitle(),
+                request.hasContent() ? request.getContent() : post.getContent()
         );
+
+        return PostResponse.from(post);
     }
 
     @Transactional
     public void deletePost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
-
+        Post post = findPost(postId);
         postRepository.delete(post);
     }
 
-    private void validateText(String value, String fieldName, int maxLength) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(
-                    fieldName + "은 비어 있을 수 없습니다."
-            );
-        }
-
-        if (value.length() > maxLength) {
-            throw new IllegalArgumentException(
-                    fieldName + "은 " + maxLength + "자 이하여야 합니다."
-            );
-        }
+    private Post findPost(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
     }
+
 }
