@@ -5,20 +5,19 @@ import com.apptivedev.sns.domain.post.dto.PostResponse;
 import com.apptivedev.sns.domain.post.dto.PostUpdateRequest;
 import com.apptivedev.sns.domain.post.service.PostService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor //생성자를 만들어주는 Annotation
 @RestController
 @RequestMapping("/posts")
 public class PostController {
 
     private final PostService postService;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     // POST /posts → 201 Created
     @PostMapping
