@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:sns-test;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+
+jwt:
+  # 공개된 테스트 전용 값. 실행용 JWT_SECRET과 관계없다.
+  secret: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+  access-token-validity-seconds: 3600
