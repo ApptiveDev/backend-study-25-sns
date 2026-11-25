@@ -12,10 +12,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
     private String content;
 
     // JPA가 엔티티를 생성할 때 사용하는 기본 생성자
