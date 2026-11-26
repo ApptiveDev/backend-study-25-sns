@@ -4,6 +4,7 @@ import com.apptivedev.sns.post.dto.PostCreateRequest;
 import com.apptivedev.sns.post.dto.PostUpdateRequest;
 import com.apptivedev.sns.post.dto.PostResponse;
 import com.apptivedev.sns.post.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @PostMapping
     public ResponseEntity<PostResponse> create(

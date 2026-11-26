@@ -5,7 +5,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Post {
     @Id
@@ -18,26 +23,9 @@ public class Post {
     @Column(nullable = false, length = 500)
     private String content;
 
-    // JPA가 엔티티를 생성할 때 사용하는 기본 생성자
-    // 흠...
-    protected Post() {
-    }
-
     public Post(String title, String content) {
         this.title = title;
         this.content = content;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
     }
 
     public void update(String title, String content) {

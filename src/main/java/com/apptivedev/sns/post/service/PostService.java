@@ -5,6 +5,7 @@ import com.apptivedev.sns.post.dto.PostUpdateRequest;
 import com.apptivedev.sns.post.dto.PostResponse;
 import com.apptivedev.sns.post.entity.Post;
 import com.apptivedev.sns.post.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,16 @@ import java.util.List;
 
 @Service
 // Service 객체 관리하도록 지정.
+@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+//    public PostService(PostRepository postRepository) {
+//        this.postRepository = postRepository;
+//    }
+    // (초기화되지 않은 final 필드와 @NotNull 필드를 매개변수로 받는)
+    // 생성자를 자동으로 만들어 주는 Lombok 어노테이션. = @RequiredArgsConstructor
 
     // DB를 하나의 트랜잭션으로 처리
     @Transactional
