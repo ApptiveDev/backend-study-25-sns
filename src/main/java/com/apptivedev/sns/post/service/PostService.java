@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 // Service 객체 관리하도록 지정.
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
 
     private final PostRepository postRepository;
@@ -59,7 +60,6 @@ public class PostService {
         return PostResponse.from(savedPost);
     }
 
-    @Transactional(readOnly = true)
     public List<PostResponse> findAll() {
         return postRepository.findAll().stream()
                 .map(PostResponse::from)
@@ -67,7 +67,6 @@ public class PostService {
     }
 
 
-    @Transactional(readOnly = true)
     public PostResponse findById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(
