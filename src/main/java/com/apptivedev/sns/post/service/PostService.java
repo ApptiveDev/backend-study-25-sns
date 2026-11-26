@@ -30,29 +30,9 @@ public class PostService {
     @Transactional
     public PostResponse create(PostCreateRequest request) {
 
-        if (request.title() == null || request.title().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "제목을 입력해야 합니다."
-            );
-        }
-
-        if (request.content() == null || request.content().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "내용을 입력해야 합니다."
-            );
-        }
-
-        if (request.title().length() > 100) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "제목은 100자 이하여야 합니다."
-            );
-        }
-
-        if (request.content().length() > 500) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "내용은 500자 이하여야 합니다."
-            );
-        }
+        validateTitle(request.title());
+        validateContent(request.content());
+        // 유지보수성을 증가시킴.
 
         Post post = new Post(request.title(), request.content());
         Post savedPost = postRepository.save(post);
@@ -138,5 +118,42 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         postRepository.delete(post);
+    }
+
+    // <이전 방식>
+    // .orElseThrow(() -> new IllegalArgumentException(
+    //    "게시글을 찾을 수 없습니다."
+    //));
+    // -> JAVA에서 제공하는 것이고, 잘못된 인자가 전달되었을 때 사용
+    // HTTP 상태 코드를 직접 지정할 수 없어 500으로 통일된다.
+    // 그래서 보이는 것처럼 HttpStatus를 따로 사용하지 않는다.
+    // 같은 문제로 인한 것인데, 서로 다른 오류를 반환하는 상황을 피하기 위함.
+
+    private void validateTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "제목을 입력해야 합니다."
+            );
+        }
+
+        if (title.length() > 100) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "제목은 100자 이하여야 합니다."
+            );
+        }
+    }
+
+    private void validateContent(String content) {
+        if (content == null || content.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "내용을 입력해야 합니다."
+            );
+        }
+
+        if (content.length() > 500) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "내용은 500자 이하여야 합니다."
+            );
+        }
     }
 }
