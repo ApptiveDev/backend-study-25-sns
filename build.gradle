@@ -27,6 +27,17 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// 3주차: DTO 입력값 검증
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// 3주차: BCrypt 비밀번호 Hash 처리
+	implementation 'org.springframework.security:spring-security-crypto'
+
+	// 3주차: JWT 발급 및 검증
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
 
 tasks.named('test') {

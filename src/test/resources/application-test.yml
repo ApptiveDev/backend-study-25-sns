@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:sns-test;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+jwt:
+  # 공개되어도 되는 테스트 전용 키. 실제 서비스에는 사용 금지.
+  secret: dGVzdC1vbmx5LWtleS1kb250LXVzZS1pbi1wcm9kLTAxMjM0NTY3ODk=
+  expiration-seconds: 3600

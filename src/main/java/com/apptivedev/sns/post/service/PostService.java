@@ -1,103 +1,42 @@
 package com.apptivedev.sns.post.service;
 
-import com.apptivedev.sns.post.dto.PostCreateRequest;
-import com.apptivedev.sns.post.dto.PostUpdateRequest;
-import com.apptivedev.sns.post.dto.PostResponse;
+import com.apptivedev.sns.global.exception.BusinessException;
+import com.apptivedev.sns.post.dto.*;
 import com.apptivedev.sns.post.entity.Post;
 import com.apptivedev.sns.post.repository.PostRepository;
-
-import jakarta.transaction.Transactional;
+import com.apptivedev.sns.user.entity.User;
+import com.apptivedev.sns.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class PostService {
-
     private final PostRepository postRepository;
-
-    // 생성자 주입
-    public PostService(PostRepository postRepository) {
+    private final UserRepository userRepository;
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
-
-    // 1. 게시글 생성 (Create)
     @Transactional
-    public PostResponse createPost(PostCreateRequest request) {
-
-        Post post = new Post(request.title(), request.content());
-
-        Post savedPost = postRepository.save(post);
-
-        return new PostResponse(
-                savedPost.getId(),
-                savedPost.getTitle(),
-                savedPost.getContent()
-        );
+    public PostResponse createPost(PostCreateRequest request, Long loginId) {
+        // 3주차: JWT로 인증된 사용자만 작성자로 연결한다.
+        User user = userRepository.findById(loginId).orElseThrow(BusinessException::unauthorized);
+        // 4주차: Service는 흐름을 조정하고 Entity가 자신의 규칙을 검증한다.
+        Post post = Post.createPost(request.title(), request.content(), user);
+        return PostResponse.from(postRepository.save(post));
     }
-
-    // 2. 게시글 전체 조회 (Read)
-    @Transactional
-    public List<PostResponse> getAllPosts() {
-
-        return postRepository.findAll()
-                .stream()
-                .map(post -> new PostResponse(
-                        post.getId(),
-                        post.getTitle(),
-                        post.getContent()
-                ))
-                .toList();
-    }
-
-    // 3. 게시글 단건 조회 (Read)
-    @Transactional
-    public PostResponse getPost(Long postId) {
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "게시글을 찾을 수 없습니다."
-                ));
-
-        return new PostResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent()
-        );
-    }
-
-    // 4. 게시글 수정 (Update)
+    @Transactional(readOnly = true)
+    public List<PostResponse> getAllPosts() { return postRepository.findAll().stream().map(PostResponse::from).toList(); }
+    @Transactional(readOnly = true)
+    public PostResponse getPost(Long postId) { return PostResponse.from(findPost(postId)); }
     @Transactional
     public PostResponse updatePost(Long postId, PostUpdateRequest request) {
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "게시글을 찾을 수 없습니다."
-                ));
-
+        Post post = findPost(postId);
         post.update(request.title(), request.content());
-
-        return new PostResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent()
-        );
+        return PostResponse.from(post); // JPA 변경 감지
     }
-
-    // 5. 게시글 삭제 (Delete)
     @Transactional
-    public void deletePost(Long postId) {
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "게시글을 찾을 수 없습니다."
-                ));
-
-        postRepository.delete(post);
-    }
+    public void deletePost(Long postId) { postRepository.delete(findPost(postId)); }
+    private Post findPost(Long postId) { return postRepository.findById(postId).orElseThrow(BusinessException::notFound); }
 }
