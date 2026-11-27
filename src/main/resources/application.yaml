@@ -1,3 +1,25 @@
+
 spring:
   application:
     name: backend-study-25-sns
+
+  datasource:
+    # DB에 어떻게 접속할 것인가
+    url: jdbc:h2:file:./data/snsdb
+    driver-class-name: org.h2.Driver # h2 데이터베이스레 접속하기 위한 전용 드라이버
+    # MySQL을 사용하게 된다면 my.mysql.cj.jdbc.Driver로 작성.
+    username: sa # 관리자 계정 이름
+    password:
+
+  # 정말 중요한 부분
+  jpa:
+    hibernate:
+      ddl-auto: update
+      # Post.java를 보고 DB 테이블에 필요한 열들을 추가함.
+      # 온전히 믿지는 못해서 학습이나 개발 단계에서 사용.
+    show-sql: true
+
+  h2:
+    console:
+      enabled: true
+      # 브라우저 콘솔에서 DB를 볼 수 있게 하는 설정.
